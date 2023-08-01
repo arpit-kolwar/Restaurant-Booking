@@ -30,7 +30,7 @@ export default async function handler(
   try {
     await jose.jwtVerify(token, secret);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(401).json({
       errorMessage: "Unauthorized request",
     });
@@ -60,5 +60,18 @@ export default async function handler(
     },
   });
 
-  return res.status(200).json({ user });
+  if (!user) {
+    return res.status(401).json({
+      errorMessage: "User not found",
+    });
+  }
+
+  return res.status(200).json({
+    id: user.id,
+    firstName: user.first_name,
+    lastName: user.last_name,
+    email: user.email,
+    phone: user.phone,
+    city: user.city,
+  });
 }

@@ -4,6 +4,7 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import * as jose from "jose";
 const prisma = new PrismaClient();
+import { setCookie } from "cookies-next";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
@@ -89,8 +90,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       .setExpirationTime("24h")
       .sign(secret);
 
+    setCookie("jwt", token, { req, res, maxAge: 86400 });
+
     return res.status(200).json({
-      token: token,
+      firstname: user.first_name,
+      lastname: user.last_name,
+      email: user.email,
+      phone: user.phone,
+      city: user.city,
     });
   } else {
     return res.status(400).json({ errorMessage: "Unknown endpoint" });
